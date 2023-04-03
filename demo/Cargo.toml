@@ -1,0 +1,21 @@
+[package]
+name = "enum2egui-demo"
+version = "0.1.0"
+authors = ["Matthew Berger <matthewjordanberger@gmail.com>"]
+edition = "2021"
+
+[dependencies]
+egui = "0.21.0"
+enum2egui = { path = ".." }
+enum2egui-derive = { path = "../enum2egui-derive" }
+eframe = { version = "0.21.0", default-features = false, features = [
+    "accesskit",     # Make egui comptaible with screen readers. NOTE: adds a lot of dependencies.
+    "default_fonts", # Embed the default egui fonts.
+    "glow",          # Use the glow rendering backend. Alternative: "wgpu".
+    "persistence",   # Enable restoring app state when restarting the app.
+] }
+serde = { version = "1", features = ["derive"] }
+
+# native:
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+tracing-subscriber = "0.3"

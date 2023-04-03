@@ -1,0 +1,20 @@
+[package]
+name = "enum2egui-derive"
+version = "0.1.0"
+authors = ["Matthew Berger <matthewjordanberger@gmail.com>"]
+homepage = "https://github.com/matthewjberger/enum2egui"
+repository = "https://github.com/matthewjberger/enum2egui"
+keywords = ["egui"]
+license = "MIT"
+edition = "2021"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+egui = "0.21.0"
+proc-macro2 = "1.0"
+quote = "1.0"
+syn = "1.0"
+
+
