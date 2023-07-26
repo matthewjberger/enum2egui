@@ -12,8 +12,8 @@ license = "MIT"
 edition = "2021"
 
 [dependencies]
-egui = "0.21.0"
-enum2egui-derive = { path = "enum2egui-derive" }
+egui = "0.22.0"
+enum2egui-derive = { path = "enum2egui-derive", version = "0.1.0" }
 
 [workspace]
 members = ["demo"]

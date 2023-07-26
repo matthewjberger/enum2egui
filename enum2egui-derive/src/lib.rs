@@ -1,57 +1,49 @@
-use quote::quote_spanned;
-use syn::{parse_macro_input, spanned::Spanned, Data, DeriveInput, Error, Fields};
+mod enums;
+mod structs;
+
+use enums::derive_enum;
+use proc_macro::TokenStream;
+use proc_macro2::{Ident, Span};
+use quote::{quote, ToTokens};
+use structs::derive_struct;
+use syn::{parse_macro_input, Data, DeriveInput, Error};
+
+macro_rules! derive_error {
+    ($string: tt) => {
+        Error::new(Span::call_site(), $string)
+            .to_compile_error()
+            .into()
+    };
+}
 
 #[proc_macro_derive(Gui)]
-pub fn derive_inspect(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+pub fn derive_gui(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
+    let name = &input.ident;
 
-    let fields = match input.data {
-        Data::Struct(data) => match data.fields {
-            Fields::Named(fields) => fields.named,
-            Fields::Unnamed(_) => {
-                return Error::new_spanned(input.ident, "tuple structs are not supported")
-                    .to_compile_error()
-                    .into();
+    match &input.data {
+        Data::Struct(data) => derive_struct(name, data),
+        Data::Enum(data) => derive_enum(name, data),
+        Data::Union(..) => derive_error!("enum2egui does not support unions"),
+    }
+}
+
+pub(crate) fn derive_trait(
+    name: &Ident,
+    gui: proc_macro2::TokenStream,
+    gui_mut: proc_macro2::TokenStream,
+) -> TokenStream {
+    quote! {
+        impl enum2egui::GuiInspect for #name {
+            fn ui(&self, ui: &mut egui::Ui) {
+                #gui
             }
-            Fields::Unit => {
-                return Error::new_spanned(input.ident, "unit structs are not supported")
-                    .to_compile_error()
-                    .into();
-            }
-        },
-        Data::Enum(_) | Data::Union(_) => {
-            return Error::new_spanned(input.ident, "only structs are supported")
-                .to_compile_error()
-                .into();
-        }
-    };
 
-    let struct_name = input.ident;
-
-    let ui_impl = fields
-        .iter()
-        .map(|field| {
-            let field_name = field.ident.as_ref().unwrap();
-            let field_ty = &field.ty;
-
-            quote_spanned! {field.span()=>
-                ui.horizontal(|ui| {
-                    ui.label(stringify!(#field_name));
-                    <#field_ty as Gui>::ui(&mut self.#field_name, ui);
-                });
-            }
-        })
-        .collect::<proc_macro2::TokenStream>();
-
-    let expanded = quote::quote! {
-        impl enum2egui::Gui for #struct_name {
-            fn ui(&mut self, ui: &mut egui::Ui) {
-                ui.vertical(|ui| {
-                    #ui_impl
-                });
+            fn ui_mut(&mut self, ui: &mut egui::Ui) {
+                #gui_mut
             }
         }
-    };
-
-    proc_macro::TokenStream::from(expanded)
+    }
+    .to_token_stream()
+    .into()
 }

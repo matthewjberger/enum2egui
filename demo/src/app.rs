@@ -1,59 +1,92 @@
-use enum2egui::Gui;
+use enum2egui::{Gui, GuiInspect};
+use enum2str::EnumStr;
 
-#[derive(Gui, Clone, Default, serde::Deserialize, serde::Serialize)]
-pub struct Data {
-    value_string: String,
-    value_i8: i8,
-    value_i16: i16,
-    value_i32: i32,
-    value_i64: i64,
-    value_bool: bool,
-    value_u8: u8,
-    value_u16: u16,
-    value_u32: u32,
-    value_f32: f32,
-    value_f64: f64,
-    sub_data: SubData,
+#[derive(Gui, EnumStr, Debug, Clone, Default, serde::Deserialize, serde::Serialize, PartialEq)]
+pub enum Color {
+    #[default]
+    Red,
+    Green,
+    #[enum2str("Custom")]
+    Custom(u8, u8, u8),
+    NamedCustom {
+        red: u8,
+        blue: u8,
+        green: u8,
+        metadata: Metadata,
+    },
 }
 
-#[derive(Gui, Clone, Default, serde::Deserialize, serde::Serialize)]
+#[derive(Gui, Clone, serde::Deserialize, serde::Serialize)]
+pub struct Data {
+    string: String,
+    i8: i8,
+    i16: i16,
+    i32: i32,
+    i64: i64,
+    bool: bool,
+    u8: u8,
+    u16: u16,
+    u32: u32,
+    f32: f32,
+    f64: f64,
+    nested_struct: SubData,
+    unnamed_struct: TupleStruct,
+    color: Color,
+    optional: Option<SubData>,
+}
+
+impl Default for Data {
+    fn default() -> Self {
+        Self {
+            string: "Hello!".to_string(),
+            i8: 42,
+            i16: 1555,
+            i32: -242522,
+            i64: 23425259,
+            bool: true,
+            u8: 94,
+            u16: 14029,
+            u32: 3025844,
+            f32: std::f32::consts::PI,
+            f64: std::f64::consts::PI,
+            nested_struct: SubData::default(),
+            unnamed_struct: TupleStruct::default(),
+            color: Color::default(),
+            optional: Some(SubData::default()),
+        }
+    }
+}
+
+#[derive(Gui, Clone, serde::Deserialize, serde::Serialize, PartialEq)]
+pub struct TupleStruct(u8, u32, String, SubData);
+
+impl Default for TupleStruct {
+    fn default() -> Self {
+        Self(3, 24, "Hello!".to_string(), SubData::default())
+    }
+}
+
+#[derive(Gui, Clone, Default, serde::Deserialize, serde::Serialize, PartialEq, Debug)]
+pub struct Metadata {
+    message: String,
+}
+
+#[derive(Gui, Clone, Default, serde::Deserialize, serde::Serialize, PartialEq)]
 pub struct SubData {
     value: String,
     number: u32,
 }
 
-/// We derive Deserialize/Serialize so we can persist app state on shutdown.
 #[derive(serde::Deserialize, serde::Serialize)]
-#[serde(default)] // if we add new fields, give them default values when deserializing old state
+#[serde(default)]
+#[derive(Default)]
 pub struct DemoApp {
     data: Data,
 }
 
-impl Default for DemoApp {
-    fn default() -> Self {
-        Self {
-            data: Data::default(),
-        }
-    }
-}
-
-impl DemoApp {
-    pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
-        if let Some(storage) = cc.storage {
-            return eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default();
-        }
-        Default::default()
-    }
-}
-
 impl eframe::App for DemoApp {
-    fn save(&mut self, storage: &mut dyn eframe::Storage) {
-        eframe::set_value(storage, eframe::APP_KEY, self);
-    }
-
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         let Self { data } = self;
-
-        egui::CentralPanel::default().show(ctx, |ui| data.ui(ui));
+        egui::CentralPanel::default().show(ctx, |ui| data.ui_mut(ui));
     }
 }
