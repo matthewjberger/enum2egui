@@ -96,3 +96,5 @@ impl eframe::App for DemoApp {
     }
 }
 ```
+
+![image](https://github.com/matthewjberger/enum2egui/assets/7131091/a8508a37-4d7a-4740-b73b-03399f864db1)
