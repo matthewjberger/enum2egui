@@ -201,19 +201,3 @@ fn unnamed_match_arm(
     }
     .to_token_stream()
 }
-
-// if ui
-//     .selectable_label(matches!(self, Animal::Dog { .. }), "Dog")
-//     .clicked()
-// {
-//     *self = Animal::Dog {
-//         name: "".to_string(),
-//         age: 0,
-//     };
-// }
-// if ui
-//     .selectable_label(matches!(self, Animal::Cat(_)), "Cat")
-//     .clicked()
-// {
-//     *self = Animal::Cat("".to_string());
-// }
