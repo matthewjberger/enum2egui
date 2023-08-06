@@ -66,3 +66,23 @@ where
         }
     }
 }
+
+macro_rules! impl_gui_for_128_bit_numerics {
+    ($($t:ty)*) => ($(
+        impl GuiInspect for $t {
+            fn ui(&self, ui: &mut Ui) {
+                ui.label(format!("{}", self));
+            }
+
+            fn ui_mut(&mut self, ui: &mut Ui) {
+                let mut text = format!("{self}");
+                ui.text_edit_singleline(&mut text);
+                if let Ok(value) = text.parse() {
+                    *self = value;
+                }
+            }
+        }
+    )*)
+}
+
+impl_gui_for_128_bit_numerics!(u128 i128);
