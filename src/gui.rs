@@ -67,7 +67,7 @@ where
     }
 }
 
-macro_rules! impl_gui_for_128_bit_numerics {
+macro_rules! impl_large_numerics {
     ($($t:ty)*) => ($(
         impl GuiInspect for $t {
             fn ui(&self, ui: &mut Ui) {
@@ -85,4 +85,4 @@ macro_rules! impl_gui_for_128_bit_numerics {
     )*)
 }
 
-impl_gui_for_128_bit_numerics!(u128 i128);
+impl_large_numerics!(u128 i128 usize);
