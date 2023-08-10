@@ -34,7 +34,7 @@ pub fn derive_enum(name: &Ident, data: &DataEnum) -> TokenStream {
     }
 
     let gui: proc_macro2::TokenStream = quote! {
-        ui.label(stringify!(format!("{self}")));
+        ui.label(format!("{self}"));
     }
     .to_token_stream();
 
