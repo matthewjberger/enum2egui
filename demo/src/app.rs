@@ -34,7 +34,8 @@ pub struct Data {
     usize: usize,
     nested_struct: SubData,
     unnamed_struct: TupleStruct,
-    color: Color,
+    primary_color: Color,
+    secondary_color: Color,
     optional: Option<SubData>,
 }
 
@@ -57,7 +58,8 @@ impl Default for Data {
             usize: usize::MAX,
             nested_struct: SubData::default(),
             unnamed_struct: TupleStruct::default(),
-            color: Color::default(),
+            primary_color: Color::default(),
+            secondary_color: Color::default(),
             optional: Some(SubData::default()),
         }
     }

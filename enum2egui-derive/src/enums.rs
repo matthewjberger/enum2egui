@@ -34,13 +34,13 @@ pub fn derive_enum(name: &Ident, data: &DataEnum) -> TokenStream {
     }
 
     let gui: proc_macro2::TokenStream = quote! {
-        ui.label(stringify!(format!("{}", self)));
+        ui.label(stringify!(format!("{self}")));
     }
     .to_token_stream();
 
     let gui_mut: proc_macro2::TokenStream = quote! {
         ui.vertical(|ui| {
-            egui::ComboBox::from_id_source(format!("{}_selection", stringify!(#name)))
+            egui::ComboBox::from_id_source(ui.next_auto_id())
                 .selected_text(format!("{self}"))
                 .show_ui(ui, |ui| {
                     #selections_mut

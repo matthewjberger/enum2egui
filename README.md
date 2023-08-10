@@ -14,7 +14,7 @@ This is useful for generating data bindings that can be modified and displayed i
 Add this to your `Cargo.toml`:
 
 ```toml
-enum2egui = "0.1.2"
+enum2egui = "0.1.3"
 ```
 
 ### Example
@@ -39,7 +39,7 @@ pub enum Color {
     },
 }
 
-#[derive(Gui, Clone, serde::Deserialize, serde::Serialize)]
+#[derive(Gui, Clone, serde::Deserialize, serde::Serialize, Default)]
 pub struct Data {
     string: String,
     i8: i8,
@@ -54,7 +54,8 @@ pub struct Data {
     f64: f64,
     nested_struct: SubData,
     unnamed_struct: TupleStruct,
-    color: Color,
+    primary_color: Color,
+    secondary_color: Color,
     optional: Option<SubData>,
 }
 

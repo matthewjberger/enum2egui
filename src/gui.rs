@@ -11,7 +11,7 @@ macro_rules! impl_gui_for_primitive {
     ($($t:ty)*) => ($(
         impl GuiInspect for $t {
             fn ui(&self, ui: &mut Ui) {
-                ui.label(format!("{}", self));
+                ui.label(format!("{self}"));
             }
 
             fn ui_mut(&mut self, ui: &mut Ui) {
@@ -25,7 +25,7 @@ impl_gui_for_primitive!(i8 i16 i32 i64 u8 u16 u32 u64 f32 f64);
 
 impl GuiInspect for bool {
     fn ui(&self, ui: &mut Ui) {
-        ui.label(format!("{}", self));
+        ui.label(format!("{self}"));
     }
 
     fn ui_mut(&mut self, ui: &mut Ui) {
@@ -71,7 +71,7 @@ macro_rules! impl_large_numerics {
     ($($t:ty)*) => ($(
         impl GuiInspect for $t {
             fn ui(&self, ui: &mut Ui) {
-                ui.label(format!("{}", self));
+                ui.label(format!("{self}"));
             }
 
             fn ui_mut(&mut self, ui: &mut Ui) {
