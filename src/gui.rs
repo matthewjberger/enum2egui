@@ -86,3 +86,51 @@ macro_rules! impl_large_numerics {
 }
 
 impl_large_numerics!(u128 i128 usize);
+
+impl<T> GuiInspect for Vec<T>
+where
+    T: GuiInspect + Default,
+{
+    fn ui(&self, ui: &mut Ui) {
+        egui::ScrollArea::vertical()
+            .id_source(ui.next_auto_id())
+            .show(ui, |ui| {
+                self.iter().enumerate().for_each(|(index, item)| {
+                    ui.group(|ui| {
+                        ui.label(format!("Item {index}"));
+                        item.ui(ui);
+                    });
+                });
+                if self.is_empty() {
+                    ui.label("Empty Vec");
+                }
+            });
+    }
+
+    fn ui_mut(&mut self, ui: &mut Ui) {
+        ui.group(|ui| {
+            ui.vertical(|ui| {
+                ui.horizontal(|ui| {
+                    if ui.button("Add Item").clicked() {
+                        self.push(T::default());
+                    }
+
+                    if !self.is_empty() && ui.button("Remove Last Item").clicked() {
+                        self.pop();
+                    }
+                });
+                ui.separator();
+                egui::ScrollArea::vertical().show(ui, |ui| {
+                    ui.vertical(|ui| {
+                        self.iter_mut().enumerate().for_each(|(index, item)| {
+                            ui.group(|ui| {
+                                ui.label(format!("Item {index}"));
+                                item.ui_mut(ui);
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    }
+}

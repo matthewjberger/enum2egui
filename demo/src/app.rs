@@ -37,6 +37,7 @@ pub struct Data {
     primary_color: Color,
     secondary_color: Color,
     optional: Option<SubData>,
+    list: Vec<Color>,
 }
 
 impl Default for Data {
@@ -61,6 +62,19 @@ impl Default for Data {
             primary_color: Color::default(),
             secondary_color: Color::default(),
             optional: Some(SubData::default()),
+            list: vec![
+                Color::Red,
+                Color::Green,
+                Color::Custom(3, 2, 1),
+                Color::NamedCustom {
+                    red: 23,
+                    blue: 100,
+                    green: 30,
+                    metadata: Metadata {
+                        message: "Hello!".to_string(),
+                    },
+                },
+            ],
         }
     }
 }
@@ -85,6 +99,25 @@ pub struct SubData {
     number: u32,
 }
 
+#[derive(
+    Default,
+    Debug,
+    serde::Serialize,
+    serde::Deserialize,
+    Eq,
+    PartialEq,
+    Hash,
+    Clone,
+    Copy,
+    EnumStr,
+    PartialOrd,
+    Gui,
+)]
+pub enum Simple {
+    #[default]
+    Variant,
+}
+
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)]
 #[derive(Default)]
@@ -95,6 +128,8 @@ pub struct DemoApp {
 impl eframe::App for DemoApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         let Self { data } = self;
-        egui::CentralPanel::default().show(ctx, |ui| data.ui_mut(ui));
+        egui::CentralPanel::default().show(ctx, |ui| {
+            data.ui_mut(ui);
+        });
     }
 }
