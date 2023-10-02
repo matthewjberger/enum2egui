@@ -15,7 +15,7 @@ edition = "2021"
 proc-macro = true
 
 [dependencies]
-egui = "0.22.0"
+egui = "0.23.0"
 proc-macro2 = "1.0"
 quote = "1.0"
 syn = "1.0"
