@@ -134,3 +134,22 @@ where
         });
     }
 }
+
+impl<K, V> GuiInspect for std::collections::HashMap<K, V>
+where
+    K: GuiInspect + Clone + std::hash::Hash + Eq + Default + std::fmt::Debug,
+    V: GuiInspect + Default,
+{
+    fn ui(&self, _ui: &mut Ui) {}
+    fn ui_mut(&mut self, _ui: &mut Ui) {}
+}
+
+#[cfg(feature = "hashbrown")]
+impl<K, V> GuiInspect for hashbrown::HashMap<K, V>
+where
+    K: GuiInspect + Clone + std::hash::Hash + Eq + Default + std::fmt::Debug,
+    V: GuiInspect + Default,
+{
+    fn ui(&self, _ui: &mut Ui) {}
+    fn ui_mut(&mut self, _ui: &mut Ui) {}
+}

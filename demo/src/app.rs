@@ -1,5 +1,6 @@
 use enum2egui::{Gui, GuiInspect};
 use enum2str::EnumStr;
+use std::collections::HashMap;
 
 #[derive(Gui, EnumStr, Debug, Clone, Default, serde::Deserialize, serde::Serialize, PartialEq)]
 pub enum Color {
@@ -35,6 +36,9 @@ pub struct Data {
     #[enum2egui(skip)]
     skipped_data: u32,
 
+    hashmap: std::collections::HashMap<String, String>,
+    hashbrown: hashbrown::HashMap<String, String>,
+
     string: String,
     i8: i8,
     i16: i16,
@@ -60,6 +64,8 @@ pub struct Data {
 impl Default for Data {
     fn default() -> Self {
         Self {
+            hashmap: HashMap::default(),
+            hashbrown: hashbrown::HashMap::default(),
             skipped_data: 0,
             string: "Hello!".to_string(),
             i8: 42,
