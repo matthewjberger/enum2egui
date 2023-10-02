@@ -1,4 +1,4 @@
-use crate::derive_trait;
+use crate::{derive_trait, has_skip_attr};
 use proc_macro::TokenStream;
 use proc_macro2::{Ident, TokenStream as TokenStream2};
 use quote::{quote, quote_spanned, ToTokens};
@@ -50,6 +50,10 @@ fn unnamed_field_label(index: usize) -> String {
 }
 
 fn unnamed_field_block(field: &syn::Field, index: usize) -> proc_macro2::TokenStream {
+    if has_skip_attr(&field.attrs) {
+        return quote! {};
+    }
+
     let field_name = unnamed_field_label(index);
     let field_type = &field.ty;
     let index = syn::Index::from(index);
@@ -64,6 +68,10 @@ fn unnamed_field_block(field: &syn::Field, index: usize) -> proc_macro2::TokenSt
 }
 
 fn unnamed_field_block_mut(field: &syn::Field, index: usize) -> proc_macro2::TokenStream {
+    if has_skip_attr(&field.attrs) {
+        return quote! {};
+    }
+
     let field_name = unnamed_field_label(index);
     let field_type = &field.ty;
     let index = syn::Index::from(index);
@@ -101,6 +109,10 @@ fn named_struct_field_blocks(
 }
 
 fn named_field_block(field: &syn::Field) -> proc_macro2::TokenStream {
+    if has_skip_attr(&field.attrs) {
+        return quote! {};
+    }
+
     let field_name = &field.ident;
     let field_ty = &field.ty;
     quote_spanned! { field.span() =>
@@ -113,6 +125,10 @@ fn named_field_block(field: &syn::Field) -> proc_macro2::TokenStream {
 }
 
 fn named_field_block_mut(field: &syn::Field) -> proc_macro2::TokenStream {
+    if has_skip_attr(&field.attrs) {
+        return quote! {};
+    }
+
     let field_name = &field.ident;
     let field_ty = &field.ty;
     quote_spanned! { field.span() =>

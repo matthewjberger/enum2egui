@@ -1,4 +1,4 @@
-use crate::derive_trait;
+use crate::{derive_trait, has_skip_attr};
 use proc_macro::TokenStream;
 use proc_macro2::{Ident, Span};
 use quote::{quote, ToTokens};
@@ -11,6 +11,10 @@ pub fn derive_enum(name: &Ident, data: &DataEnum) -> TokenStream {
     let mut field_match_arms = proc_macro2::TokenStream::new();
 
     for variant in variants.iter() {
+        if has_skip_attr(&variant.attrs) {
+            continue;
+        }
+
         let variant_name = &variant.ident;
 
         let selection_mut = match &variant.fields {

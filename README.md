@@ -14,7 +14,7 @@ This is useful for generating data bindings that can be modified and displayed i
 Add this to your `Cargo.toml`:
 
 ```toml
-enum2egui = "0.1.4"
+enum2egui = "0.1.5"
 ```
 
 ### Example
@@ -29,14 +29,24 @@ pub enum Color {
     #[default]
     Red,
     Green,
+
     #[enum2str("Custom")]
     Custom(u8, u8, u8),
+
     NamedCustom {
         red: u8,
         blue: u8,
         green: u8,
         metadata: Metadata,
     },
+
+    #[enum2egui(skip)]
+    SkippedGreen,
+
+    #[enum2egui(skip)]
+    #[enum2str("Skipped Custom")]
+    SkippedCustom(u8, u8, u8),
+
 }
 
 #[derive(Gui, Clone, serde::Deserialize, serde::Serialize, Default)]

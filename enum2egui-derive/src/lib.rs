@@ -6,7 +6,7 @@ use proc_macro::TokenStream;
 use proc_macro2::{Ident, Span};
 use quote::{quote, ToTokens};
 use structs::derive_struct;
-use syn::{parse_macro_input, Data, DeriveInput, Error};
+use syn::{parse_macro_input, Attribute, Data, DeriveInput, Error, Meta, NestedMeta};
 
 macro_rules! derive_error {
     ($string: tt) => {
@@ -16,7 +16,7 @@ macro_rules! derive_error {
     };
 }
 
-#[proc_macro_derive(Gui)]
+#[proc_macro_derive(Gui, attributes(enum2egui))]
 pub fn derive_gui(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     let name = &input.ident;
@@ -46,4 +46,28 @@ pub(crate) fn derive_trait(
     }
     .to_token_stream()
     .into()
+}
+
+pub(crate) fn has_skip_attr(attrs: &[Attribute]) -> bool {
+    attrs.iter().any(|attr| is_enum2egui_skip_attr(attr))
+}
+
+fn is_enum2egui_skip_attr(attr: &Attribute) -> bool {
+    if let Ok(meta) = attr.parse_meta() {
+        if let Meta::List(meta_list) = meta {
+            if meta_list.path.is_ident("enum2egui") {
+                return has_skip_path(&meta_list.nested);
+            }
+        }
+    }
+    false
+}
+
+fn has_skip_path(nested: &syn::punctuated::Punctuated<NestedMeta, syn::token::Comma>) -> bool {
+    nested.iter().any(|nested| {
+        if let NestedMeta::Meta(Meta::Path(path)) = nested {
+            return path.is_ident("skip");
+        }
+        false
+    })
 }

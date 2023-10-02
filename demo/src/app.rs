@@ -6,8 +6,22 @@ pub enum Color {
     #[default]
     Red,
     Green,
+
     #[enum2str("Custom")]
     Custom(u8, u8, u8),
+
+    #[enum2egui(skip)]
+    #[enum2str("Skipped Custom")]
+    SkippedCustom(u8, u8, u8),
+
+    #[enum2egui(skip)]
+    SkippedNamedCustom {
+        red: u8,
+        blue: u8,
+        green: u8,
+        metadata: Metadata,
+    },
+
     NamedCustom {
         red: u8,
         blue: u8,
@@ -18,6 +32,9 @@ pub enum Color {
 
 #[derive(Gui, Clone, serde::Deserialize, serde::Serialize)]
 pub struct Data {
+    #[enum2egui(skip)]
+    skipped_data: u32,
+
     string: String,
     i8: i8,
     i16: i16,
@@ -43,6 +60,7 @@ pub struct Data {
 impl Default for Data {
     fn default() -> Self {
         Self {
+            skipped_data: 0,
             string: "Hello!".to_string(),
             i8: 42,
             i16: 1555,
