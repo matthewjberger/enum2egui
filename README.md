@@ -4,7 +4,7 @@
 [<img alt="crates.io" src="https://img.shields.io/crates/v/enum2egui.svg?style=for-the-badge&color=fc8d62&logo=rust" height="20">](https://crates.io/crates/enum2egui)
 [<img alt="docs.rs" src="https://img.shields.io/badge/docs.rs-enum2egui-66c2a5?style=for-the-badge&labelColor=555555&logo=docs.rs" height="20">](https://docs.rs/enum2egui)
 
-enum2egui is a rust derive macro that creates egui UI's from arbitrary structs and enums.
+`enum2egui` is a rust derive macro that creates egui UI's from arbitrary structs and enums.
 This is useful for generating data bindings that can be modified and displayed in an [egui](https://github.com/emilk/egui) ui. 
 
 `Default` and `Display` are required. [enum2str](https://github.com/matthewjberger/enum2str) is recommended for deriving `Display` on enums.
@@ -14,7 +14,7 @@ This is useful for generating data bindings that can be modified and displayed i
 Add this to your `Cargo.toml`:
 
 ```toml
-enum2egui = "0.1.7"
+enum2egui = "0.1.8" # supports egui 0.24.1
 ```
 
 ### Example
