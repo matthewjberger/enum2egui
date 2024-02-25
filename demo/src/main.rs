@@ -3,14 +3,14 @@
 
 use enum2egui_demo::DemoApp;
 
-fn main() -> eframe::Result<()> {
+fn main() -> eframe::Result<(), eframe::Error> {
     // Log to stdout (if you run with `RUST_LOG=debug`).
     tracing_subscriber::fmt::init();
 
     let native_options = eframe::NativeOptions::default();
     eframe::run_native(
-        "enum2egui demo",
+        "My egui App",
         native_options,
-        Box::new(|_creation_context| Box::<DemoApp>::default()),
+        Box::new(|_cc| Box::<DemoApp>::default()),
     )
 }
