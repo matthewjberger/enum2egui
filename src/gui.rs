@@ -92,19 +92,15 @@ where
     T: GuiInspect + Default,
 {
     fn ui(&self, ui: &mut Ui) {
-        egui::ScrollArea::vertical()
-            .id_source(ui.next_auto_id())
-            .show(ui, |ui| {
-                self.iter().enumerate().for_each(|(index, item)| {
-                    ui.group(|ui| {
-                        ui.label(format!("Item {index}"));
-                        item.ui(ui);
-                    });
-                });
-                if self.is_empty() {
-                    ui.label("Empty Vec");
-                }
+        self.iter().enumerate().for_each(|(index, item)| {
+            ui.group(|ui| {
+                ui.label(format!("Item {index}"));
+                item.ui(ui);
             });
+        });
+        if self.is_empty() {
+            ui.label("Empty Vec");
+        }
     }
 
     fn ui_mut(&mut self, ui: &mut Ui) {
@@ -120,36 +116,15 @@ where
                     }
                 });
                 ui.separator();
-                egui::ScrollArea::vertical().show(ui, |ui| {
-                    ui.vertical(|ui| {
-                        self.iter_mut().enumerate().for_each(|(index, item)| {
-                            ui.group(|ui| {
-                                ui.label(format!("Item {index}"));
-                                item.ui_mut(ui);
-                            });
+                ui.vertical(|ui| {
+                    self.iter_mut().enumerate().for_each(|(index, item)| {
+                        ui.group(|ui| {
+                            ui.label(format!("Item {index}"));
+                            item.ui_mut(ui);
                         });
                     });
                 });
             });
         });
     }
-}
-
-impl<K, V> GuiInspect for std::collections::HashMap<K, V>
-where
-    K: GuiInspect + Clone + std::hash::Hash + Eq + Default + std::fmt::Debug,
-    V: GuiInspect + Default,
-{
-    fn ui(&self, _ui: &mut Ui) {}
-    fn ui_mut(&mut self, _ui: &mut Ui) {}
-}
-
-#[cfg(feature = "hashbrown")]
-impl<K, V> GuiInspect for hashbrown::HashMap<K, V>
-where
-    K: GuiInspect + Clone + std::hash::Hash + Eq + Default + std::fmt::Debug,
-    V: GuiInspect + Default,
-{
-    fn ui(&self, _ui: &mut Ui) {}
-    fn ui_mut(&mut self, _ui: &mut Ui) {}
 }

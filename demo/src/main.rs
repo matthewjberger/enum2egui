@@ -9,8 +9,8 @@ fn main() -> eframe::Result<(), eframe::Error> {
 
     let native_options = eframe::NativeOptions::default();
     eframe::run_native(
-        "My egui App",
+        "enum2egui Demo",
         native_options,
-        Box::new(|_cc| Box::<DemoApp>::default()),
+        Box::new(|_cc| Ok(Box::<DemoApp>::default())),
     )
 }

@@ -6,6 +6,7 @@ use std::collections::HashMap;
 pub enum Color {
     #[default]
     Red,
+
     Green,
 
     #[enum2str("Custom")]
@@ -29,6 +30,14 @@ pub enum Color {
         green: u8,
         metadata: Metadata,
     },
+
+    #[enum2str("Named Vec")]
+    NamedVec {
+        bytes: Vec<u8>,
+    },
+
+    #[enum2str("Unnamed Vec")]
+    UnnamedVec(Vec<u8>),
 }
 
 #[derive(Gui, Clone, serde::Deserialize, serde::Serialize)]
@@ -36,8 +45,8 @@ pub struct Data {
     #[enum2egui(skip)]
     skipped_data: u32,
 
-    hashmap: std::collections::HashMap<String, String>,
-    hashbrown: hashbrown::HashMap<String, String>,
+    #[enum2egui(skip)]
+    hashmap: std::collections::HashMap<String, Metadata>,
 
     string: String,
     i8: i8,
@@ -65,7 +74,6 @@ impl Default for Data {
     fn default() -> Self {
         Self {
             hashmap: HashMap::default(),
-            hashbrown: hashbrown::HashMap::default(),
             skipped_data: 0,
             string: "Hello!".to_string(),
             i8: 42,
@@ -121,6 +129,7 @@ pub struct Metadata {
 pub struct SubData {
     value: String,
     number: u32,
+    list: Vec<Metadata>,
 }
 
 #[derive(

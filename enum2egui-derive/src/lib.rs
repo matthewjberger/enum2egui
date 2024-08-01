@@ -49,15 +49,13 @@ pub(crate) fn derive_trait(
 }
 
 pub(crate) fn has_skip_attr(attrs: &[Attribute]) -> bool {
-    attrs.iter().any(|attr| is_enum2egui_skip_attr(attr))
+    attrs.iter().any(is_enum2egui_skip_attr)
 }
 
 fn is_enum2egui_skip_attr(attr: &Attribute) -> bool {
-    if let Ok(meta) = attr.parse_meta() {
-        if let Meta::List(meta_list) = meta {
-            if meta_list.path.is_ident("enum2egui") {
-                return has_skip_path(&meta_list.nested);
-            }
+    if let Ok(Meta::List(meta_list)) = attr.parse_meta() {
+        if meta_list.path.is_ident("enum2egui") {
+            return has_skip_path(&meta_list.nested);
         }
     }
     false

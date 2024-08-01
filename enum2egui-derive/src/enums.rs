@@ -2,7 +2,7 @@ use crate::{derive_trait, has_skip_attr};
 use proc_macro::TokenStream;
 use proc_macro2::{Ident, Span};
 use quote::{quote, ToTokens};
-use syn::{DataEnum, Fields, FieldsNamed, FieldsUnnamed};
+use syn::{DataEnum, Fields, FieldsNamed, FieldsUnnamed, PathArguments, Type};
 
 pub fn derive_enum(name: &Ident, data: &DataEnum) -> TokenStream {
     let DataEnum { variants, .. } = data;
@@ -73,34 +73,6 @@ fn unit_impl_mut(name: &Ident, variant_name: &Ident) -> proc_macro2::TokenStream
     .to_token_stream()
 }
 
-fn unnamed_impl_mut(
-    name: &Ident,
-    variant_name: &Ident,
-    fields: &FieldsUnnamed,
-) -> proc_macro2::TokenStream {
-    let mut default_fields = proc_macro2::TokenStream::new();
-
-    let FieldsUnnamed { unnamed, .. } = fields;
-    unnamed.iter().for_each(|field| {
-        let field_type = &field.ty;
-        let default_field: proc_macro2::TokenStream = quote! {
-            #field_type::default(),
-        }
-        .to_token_stream();
-        default_fields.extend(default_field);
-    });
-
-    quote! {
-        if ui
-            .selectable_label(matches!(self, #name::#variant_name( .. )), stringify!(#variant_name))
-            .clicked()
-        {
-            *self = #name::#variant_name(#default_fields);
-        }
-    }
-    .to_token_stream()
-}
-
 fn named_impl_mut(
     name: &Ident,
     variant_name: &Ident,
@@ -111,9 +83,8 @@ fn named_impl_mut(
     let FieldsNamed { named, .. } = fields;
     named.iter().for_each(|field| {
         let field_name = &field.ident;
-        let field_type = &field.ty;
-        let default_field: proc_macro2::TokenStream = quote! {
-            #field_name: #field_type::default(),
+        let default_field = quote! {
+            #field_name: Default::default(),
         }
         .to_token_stream();
         default_fields.extend(default_field);
@@ -125,6 +96,40 @@ fn named_impl_mut(
             .clicked()
         {
             *self = #name::#variant_name { #default_fields };
+        }
+    }
+    .to_token_stream()
+}
+
+fn unnamed_impl_mut(
+    name: &Ident,
+    variant_name: &Ident,
+    fields: &FieldsUnnamed,
+) -> proc_macro2::TokenStream {
+    let mut default_fields = proc_macro2::TokenStream::new();
+
+    let FieldsUnnamed { unnamed, .. } = fields;
+    unnamed.iter().for_each(|field| {
+        let field_type = &field.ty;
+        let default_field: proc_macro2::TokenStream = if is_vec_type(field_type) {
+            quote! {
+                Vec::default(),
+            }
+        } else {
+            quote! {
+                #field_type::default(),
+            }
+        }
+        .to_token_stream();
+        default_fields.extend(default_field);
+    });
+
+    quote! {
+        if ui
+            .selectable_label(matches!(self, #name::#variant_name( .. )), stringify!(#variant_name))
+            .clicked()
+        {
+            *self = #name::#variant_name(#default_fields);
         }
     }
     .to_token_stream()
@@ -204,4 +209,14 @@ fn unnamed_match_arm(
         }
     }
     .to_token_stream()
+}
+
+fn is_vec_type(ty: &Type) -> bool {
+    if let Type::Path(type_path) = ty {
+        if let Some(segment) = type_path.path.segments.last() {
+            return segment.ident == "Vec"
+                && matches!(segment.arguments, PathArguments::AngleBracketed(_));
+        }
+    }
+    false
 }
