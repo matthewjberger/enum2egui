@@ -94,11 +94,8 @@ where
     T: GuiInspect + Default,
 {
     fn ui(&self, ui: &mut Ui) {
-        self.iter().enumerate().for_each(|(index, item)| {
-            ui.group(|ui| {
-                ui.label(format!("Item {index}"));
-                item.ui(ui);
-            });
+        self.iter().for_each(|item| {
+            item.ui(ui);
         });
         if self.is_empty() {
             ui.label("Empty Vec");
@@ -109,12 +106,12 @@ where
         ui.group(|ui| {
             ui.vertical(|ui| {
                 ui.horizontal(|ui| {
-                    if ui.button("Add Item").clicked() {
+                    if ui.button("Add").clicked() {
                         self.push(T::default());
                     }
 
                     if ui
-                        .add_enabled(!self.is_empty(), egui::Button::new("Remove Last Item"))
+                        .add_enabled(!self.is_empty(), egui::Button::new("Remove Last"))
                         .clicked()
                     {
                         self.pop();
@@ -122,11 +119,8 @@ where
                 });
                 ui.separator();
                 ui.vertical(|ui| {
-                    self.iter_mut().enumerate().for_each(|(index, item)| {
-                        ui.group(|ui| {
-                            ui.label(format!("Item {index}"));
-                            item.ui_mut(ui);
-                        });
+                    self.iter_mut().for_each(|item| {
+                        item.ui_mut(ui);
                     });
                 });
             });
