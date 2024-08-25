@@ -1,3 +1,5 @@
+#![allow(non_snake_case)]
+
 use egui::{widgets::DragValue, Ui};
 
 pub use egui;
@@ -111,7 +113,10 @@ where
                         self.push(T::default());
                     }
 
-                    if !self.is_empty() && ui.button("Remove Last Item").clicked() {
+                    if ui
+                        .add_enabled(!self.is_empty(), egui::Button::new("Remove Last Item"))
+                        .clicked()
+                    {
                         self.pop();
                     }
                 });
@@ -147,3 +152,41 @@ where
     fn ui(&self, _ui: &mut Ui) {}
     fn ui_mut(&mut self, _ui: &mut Ui) {}
 }
+
+macro_rules! impl_gui_for_tuples {
+    ( $( $name:ident )+ ) => {
+        impl<$($name: GuiInspect),+> GuiInspect for ($($name,)+) {
+            fn ui(&self, ui: &mut Ui) {
+                ui.horizontal(|ui| {
+                    let ($($name,)+) = self;
+                    $(
+                        $name.ui(ui);
+                    )+
+                });
+            }
+
+            fn ui_mut(&mut self, ui: &mut Ui) {
+                ui.horizontal(|ui| {
+                    let ($($name,)+) = self;
+                    $(
+                        $name.ui_mut(ui);
+                    )+
+                });
+            }
+        }
+    }
+}
+
+// Implement for tuples of size 1 to 12
+impl_gui_for_tuples!(T1);
+impl_gui_for_tuples!(T1 T2);
+impl_gui_for_tuples!(T1 T2 T3);
+impl_gui_for_tuples!(T1 T2 T3 T4);
+impl_gui_for_tuples!(T1 T2 T3 T4 T5);
+impl_gui_for_tuples!(T1 T2 T3 T4 T5 T6);
+impl_gui_for_tuples!(T1 T2 T3 T4 T5 T6 T7);
+impl_gui_for_tuples!(T1 T2 T3 T4 T5 T6 T7 T8);
+impl_gui_for_tuples!(T1 T2 T3 T4 T5 T6 T7 T8 T9);
+impl_gui_for_tuples!(T1 T2 T3 T4 T5 T6 T7 T8 T9 T10);
+impl_gui_for_tuples!(T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11);
+impl_gui_for_tuples!(T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12);

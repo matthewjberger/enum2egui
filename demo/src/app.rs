@@ -38,6 +38,9 @@ pub enum Color {
 
     #[enum2str("Unnamed Vec")]
     UnnamedVec(Vec<u8>),
+
+    #[enum2str("Tuple Vec")]
+    TupleVec(Vec<(u8, u32)>),
 }
 
 #[derive(Gui, Clone, serde::Deserialize, serde::Serialize)]
@@ -162,7 +165,13 @@ impl eframe::App for DemoApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         let Self { data } = self;
         egui::CentralPanel::default().show(ctx, |ui| {
-            data.ui_mut(ui);
+            egui::ScrollArea::vertical()
+                .id_source(ui.next_auto_id())
+                .max_width(1000.0)
+                .max_height(1000.0)
+                .show(ui, |ui| {
+                    data.ui_mut(ui);
+                });
         });
     }
 }
