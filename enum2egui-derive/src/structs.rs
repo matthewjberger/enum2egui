@@ -1,9 +1,8 @@
-use crate::{derive_trait, has_skip_attr};
+use crate::{derive_trait, get_custom_label, has_skip_attr};
 use proc_macro::TokenStream;
 use proc_macro2::{Ident, TokenStream as TokenStream2};
 use quote::{quote, quote_spanned, ToTokens};
 use syn::{spanned::Spanned, DataStruct, Fields, FieldsNamed, FieldsUnnamed};
-use syn::{Lit, Meta, NestedMeta};
 
 pub fn derive_struct(name: &Ident, data: &DataStruct) -> TokenStream {
     let DataStruct { fields, .. } = data;
@@ -165,23 +164,4 @@ fn struct_ui(name: &Ident, fields: proc_macro2::TokenStream) -> proc_macro2::Tok
         });
     }
     .to_token_stream()
-}
-
-fn get_custom_label(attrs: &Vec<syn::Attribute>) -> Option<String> {
-    for attr in attrs {
-        if attr.path.is_ident("enum2egui") {
-            if let Ok(syn::Meta::List(meta_list)) = attr.parse_meta() {
-                for nested_meta in meta_list.nested {
-                    if let NestedMeta::Meta(Meta::NameValue(nv)) = nested_meta {
-                        if nv.path.is_ident("label") {
-                            if let Lit::Str(lit_str) = nv.lit {
-                                return Some(lit_str.value());
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    None
 }

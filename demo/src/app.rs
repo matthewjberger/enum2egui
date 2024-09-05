@@ -9,6 +9,19 @@ pub enum Color {
 
     Green,
 
+    #[enum2egui(label = "Renamed Unit Variant")]
+    LabeledUnitVariant,
+
+    #[enum2egui(label = "Renamed Named Variants")]
+    LabeledNamedVariants {
+        #[enum2egui(label = "Red")]
+        r: u8,
+        #[enum2egui(label = "Green")]
+        g: u8,
+        #[enum2egui(label = "Blue")]
+        b: u8,
+    },
+
     #[enum2str("Custom")]
     Custom(u8, u8, u8),
 

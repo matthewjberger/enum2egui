@@ -1,4 +1,4 @@
-use crate::{derive_trait, has_skip_attr};
+use crate::{derive_trait, get_custom_label, has_skip_attr};
 use proc_macro::TokenStream;
 use proc_macro2::{Ident, Span};
 use quote::{quote, ToTokens};
@@ -17,10 +17,11 @@ pub fn derive_enum(name: &Ident, data: &DataEnum) -> TokenStream {
 
         let variant_name = &variant.ident;
 
+        // Pass variant attributes to get custom labels
         let selection_mut = match &variant.fields {
-            Fields::Unit => unit_impl_mut(name, variant_name),
-            Fields::Named(fields) => named_impl_mut(name, variant_name, fields),
-            Fields::Unnamed(fields) => unnamed_impl_mut(name, variant_name, fields),
+            Fields::Unit => unit_impl_mut(name, variant_name, &variant.attrs),
+            Fields::Named(fields) => named_impl_mut(name, variant_name, fields, &variant.attrs),
+            Fields::Unnamed(fields) => unnamed_impl_mut(name, variant_name, fields, &variant.attrs),
         };
         selections_mut.extend(selection_mut);
 
@@ -61,10 +62,16 @@ pub fn derive_enum(name: &Ident, data: &DataEnum) -> TokenStream {
     derive_trait(name, gui, gui_mut)
 }
 
-fn unit_impl_mut(name: &Ident, variant_name: &Ident) -> proc_macro2::TokenStream {
+fn unit_impl_mut(
+    name: &Ident,
+    variant_name: &Ident,
+    attrs: &Vec<syn::Attribute>,
+) -> proc_macro2::TokenStream {
+    let label = get_custom_label(attrs).unwrap_or_else(|| variant_name.to_string());
+
     quote! {
         if ui
-            .selectable_label(matches!(self, #name::#variant_name), stringify!(#variant_name))
+            .selectable_label(matches!(self, #name::#variant_name), #label)
             .clicked()
         {
             *self = #name::#variant_name;
@@ -77,8 +84,10 @@ fn named_impl_mut(
     name: &Ident,
     variant_name: &Ident,
     fields: &FieldsNamed,
+    attrs: &Vec<syn::Attribute>,
 ) -> proc_macro2::TokenStream {
     let mut default_fields = proc_macro2::TokenStream::new();
+    let label = get_custom_label(attrs).unwrap_or_else(|| variant_name.to_string());
 
     let FieldsNamed { named, .. } = fields;
     named.iter().for_each(|field| {
@@ -92,7 +101,7 @@ fn named_impl_mut(
 
     quote! {
         if ui
-            .selectable_label(matches!(self, #name::#variant_name { .. }), stringify!(#variant_name))
+            .selectable_label(matches!(self, #name::#variant_name { .. }), #label)
             .clicked()
         {
             *self = #name::#variant_name { #default_fields };
@@ -105,8 +114,10 @@ fn unnamed_impl_mut(
     name: &Ident,
     variant_name: &Ident,
     fields: &FieldsUnnamed,
+    attrs: &Vec<syn::Attribute>,
 ) -> proc_macro2::TokenStream {
     let mut default_fields = proc_macro2::TokenStream::new();
+    let label = get_custom_label(attrs).unwrap_or_else(|| variant_name.to_string());
 
     let FieldsUnnamed { unnamed, .. } = fields;
     unnamed.iter().for_each(|field| {
@@ -126,7 +137,7 @@ fn unnamed_impl_mut(
 
     quote! {
         if ui
-            .selectable_label(matches!(self, #name::#variant_name( .. )), stringify!(#variant_name))
+            .selectable_label(matches!(self, #name::#variant_name( .. )), #label)
             .clicked()
         {
             *self = #name::#variant_name(#default_fields);
@@ -154,14 +165,17 @@ fn named_match_arm(
         match_fields.extend(field_entry);
 
         let field_type = &field.ty;
-        let label: proc_macro2::TokenStream = quote! {
+        let label = get_custom_label(&field.attrs)
+            .unwrap_or_else(|| field_name.as_ref().unwrap().to_string());
+
+        let label_block: proc_macro2::TokenStream = quote! {
             ui.horizontal(|ui| {
-                ui.label(stringify!(#field_name));
+                ui.label(#label);
                 <#field_type as GuiInspect>::ui_mut(#field_name, ui);
             });
         }
         .to_token_stream();
-        labels.extend(label);
+        labels.extend(label_block);
     }
 
     quote! {
@@ -193,14 +207,16 @@ fn unnamed_match_arm(
         match_fields.extend(field_entry);
 
         let field_type = &field.ty;
-        let label: proc_macro2::TokenStream = quote! {
+        let label = get_custom_label(&field.attrs).unwrap_or_else(|| format!("field_{}", index));
+
+        let label_block: proc_macro2::TokenStream = quote! {
             ui.horizontal(|ui| {
-                ui.label(stringify!(#field_name));
+                ui.label(#label);
                 <#field_type as GuiInspect>::ui_mut(#field_name, ui);
             });
         }
         .to_token_stream();
-        labels.extend(label);
+        labels.extend(label_block);
     }
 
     quote! {
