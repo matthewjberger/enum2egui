@@ -14,7 +14,7 @@
 //!  Add this to your `Cargo.toml`:
 //!
 //!  ```toml
-//!  enum2egui = "0.3.6" # supports egui 0.28.1
+//!  enum2egui = "0.3.7" # supports egui 0.28.1
 //!  ```
 //!
 //!  ### Example
