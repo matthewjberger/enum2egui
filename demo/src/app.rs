@@ -51,6 +51,9 @@ pub struct Data {
     #[enum2egui(skip)]
     hashmap: std::collections::HashMap<String, Metadata>,
 
+    #[enum2egui(label = "Labeled Field")]
+    a: String,
+
     string: String,
     i8: i8,
     i16: i16,
@@ -110,6 +113,7 @@ impl Default for Data {
                     },
                 },
             ],
+            a: "".to_string(),
         }
     }
 }

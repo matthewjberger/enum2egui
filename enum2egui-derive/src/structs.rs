@@ -3,6 +3,7 @@ use proc_macro::TokenStream;
 use proc_macro2::{Ident, TokenStream as TokenStream2};
 use quote::{quote, quote_spanned, ToTokens};
 use syn::{spanned::Spanned, DataStruct, Fields, FieldsNamed, FieldsUnnamed};
+use syn::{Lit, Meta, NestedMeta};
 
 pub fn derive_struct(name: &Ident, data: &DataStruct) -> TokenStream {
     let DataStruct { fields, .. } = data;
@@ -58,9 +59,11 @@ fn unnamed_field_block(field: &syn::Field, index: usize) -> proc_macro2::TokenSt
     let field_type = &field.ty;
     let index = syn::Index::from(index);
 
+    let label = get_custom_label(&field.attrs).unwrap_or_else(|| field_name);
+
     quote_spanned! { field.span() =>
         ui.horizontal(|ui| {
-            ui.label(#field_name);
+            ui.label(#label);
             <#field_type as GuiInspect>::ui(&self.#index, ui);
         });
     }
@@ -76,9 +79,11 @@ fn unnamed_field_block_mut(field: &syn::Field, index: usize) -> proc_macro2::Tok
     let field_type = &field.ty;
     let index = syn::Index::from(index);
 
+    let label = get_custom_label(&field.attrs).unwrap_or_else(|| field_name);
+
     quote_spanned! { field.span() =>
         ui.horizontal(|ui| {
-            ui.label(#field_name);
+            ui.label(#label);
             <#field_type as GuiInspect>::ui_mut(&mut self.#index, ui);
         });
     }
@@ -115,9 +120,13 @@ fn named_field_block(field: &syn::Field) -> proc_macro2::TokenStream {
 
     let field_name = &field.ident;
     let field_ty = &field.ty;
+
+    let label =
+        get_custom_label(&field.attrs).unwrap_or_else(|| field_name.as_ref().unwrap().to_string());
+
     quote_spanned! { field.span() =>
         ui.horizontal(|ui| {
-            ui.label(stringify!(#field_name));
+            ui.label(#label);
             <#field_ty as GuiInspect>::ui(&self.#field_name, ui);
         });
     }
@@ -131,9 +140,13 @@ fn named_field_block_mut(field: &syn::Field) -> proc_macro2::TokenStream {
 
     let field_name = &field.ident;
     let field_ty = &field.ty;
+
+    let label =
+        get_custom_label(&field.attrs).unwrap_or_else(|| field_name.as_ref().unwrap().to_string());
+
     quote_spanned! { field.span() =>
         ui.horizontal(|ui| {
-            ui.label(stringify!(#field_name));
+            ui.label(#label);
             <#field_ty as GuiInspect>::ui_mut(&mut self.#field_name, ui);
         });
     }
@@ -152,4 +165,23 @@ fn struct_ui(name: &Ident, fields: proc_macro2::TokenStream) -> proc_macro2::Tok
         });
     }
     .to_token_stream()
+}
+
+fn get_custom_label(attrs: &Vec<syn::Attribute>) -> Option<String> {
+    for attr in attrs {
+        if attr.path.is_ident("enum2egui") {
+            if let Ok(syn::Meta::List(meta_list)) = attr.parse_meta() {
+                for nested_meta in meta_list.nested {
+                    if let NestedMeta::Meta(Meta::NameValue(nv)) = nested_meta {
+                        if nv.path.is_ident("label") {
+                            if let Lit::Str(lit_str) = nv.lit {
+                                return Some(lit_str.value());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    None
 }
