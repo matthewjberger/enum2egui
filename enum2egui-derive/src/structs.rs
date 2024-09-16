@@ -58,7 +58,7 @@ fn unnamed_field_block(field: &syn::Field, index: usize) -> proc_macro2::TokenSt
     let field_type = &field.ty;
     let index = syn::Index::from(index);
 
-    let label = get_custom_label(&field.attrs).unwrap_or_else(|| field_name);
+    let label = get_custom_label(&field.attrs).unwrap_or(field_name);
 
     quote_spanned! { field.span() =>
         ui.horizontal(|ui| {
@@ -78,7 +78,7 @@ fn unnamed_field_block_mut(field: &syn::Field, index: usize) -> proc_macro2::Tok
     let field_type = &field.ty;
     let index = syn::Index::from(index);
 
-    let label = get_custom_label(&field.attrs).unwrap_or_else(|| field_name);
+    let label = get_custom_label(&field.attrs).unwrap_or(field_name);
 
     quote_spanned! { field.span() =>
         ui.horizontal(|ui| {
