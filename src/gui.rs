@@ -128,6 +128,23 @@ where
     }
 }
 
+impl<K> GuiInspect for std::collections::HashSet<K>
+where
+    K: GuiInspect + Clone + std::hash::Hash + Eq + Default + std::fmt::Debug,
+{
+    fn ui(&self, _ui: &mut Ui) {}
+    fn ui_mut(&mut self, _ui: &mut Ui) {}
+}
+
+impl<K, V> GuiInspect for std::collections::BTreeMap<K, V>
+where
+    K: GuiInspect + Clone + std::hash::Hash + Eq + Default + std::fmt::Debug,
+    V: GuiInspect + Default,
+{
+    fn ui(&self, _ui: &mut Ui) {}
+    fn ui_mut(&mut self, _ui: &mut Ui) {}
+}
+
 impl<K, V> GuiInspect for std::collections::HashMap<K, V>
 where
     K: GuiInspect + Clone + std::hash::Hash + Eq + Default + std::fmt::Debug,

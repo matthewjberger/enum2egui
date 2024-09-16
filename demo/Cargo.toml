@@ -7,11 +7,12 @@ edition = "2021"
 [dependencies]
 egui = "0.28.1"
 enum2str = "0.1.8"
-enum2egui = { path = ".." }
+enum2egui = { path = "..", features = ["hashbrown"] }
 eframe = { version = "0.28.1", default-features = false, features = [
     "default_fonts", # Embed the default egui fonts.
     "glow",
 ] }
+hashbrown = { version = "0.14.5", features = ["serde"] }
 serde = { version = "1", features = ["derive"] }
 
 # native:
