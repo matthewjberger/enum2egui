@@ -186,9 +186,7 @@ impl eframe::App for DemoApp {
         let Self { data } = self;
         egui::CentralPanel::default().show(ctx, |ui| {
             egui::ScrollArea::vertical()
-                .id_source(ui.next_auto_id())
-                .max_width(1000.0)
-                .max_height(1000.0)
+                .id_salt(ui.next_auto_id())
                 .show(ui, |ui| {
                     data.ui_mut(ui);
                 });
