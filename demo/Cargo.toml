@@ -5,14 +5,14 @@ authors = ["Matthew Berger <matthewjordanberger@gmail.com>"]
 edition = "2021"
 
 [dependencies]
-egui = "0.29.1"
-enum2str = "0.1.10"
+egui = "0.30.0"
+enum2str = "0.1.11"
 enum2egui = { path = "..", features = ["hashbrown"] }
-eframe = { version = "0.29.1", default-features = false, features = [
+eframe = { version = "0.30.0", default-features = false, features = [
     "default_fonts", # Embed the default egui fonts.
     "glow",
 ] }
-hashbrown = { version = "0.15.0", features = ["serde"] }
+hashbrown = { version = "0.15.2", features = ["serde"] }
 serde = { version = "1", features = ["derive"] }
 
 # native:
