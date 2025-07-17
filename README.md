@@ -14,7 +14,7 @@ This is useful for generating data bindings that can be modified and displayed i
 Add this to your `Cargo.toml`:
 
 ```toml
-enum2egui = "0.3.11" # supports egui 0.31.0
+enum2egui = "0.32.0" # supports egui 0.32.0
 ```
 
 ### Example

@@ -2,17 +2,17 @@
 name = "enum2egui-demo"
 version = "0.1.0"
 authors = ["Matthew Berger <matthewjordanberger@gmail.com>"]
-edition = "2021"
+edition = "2024"
 
 [dependencies]
-egui = "0.31.0"
-enum2str = "0.1.11"
+egui = "0.32.0"
+enum2str = "0.1.16"
 enum2egui = { path = "..", features = ["hashbrown"] }
-eframe = { version = "0.31.0", default-features = false, features = [
+eframe = { version = "0.32.0", default-features = false, features = [
     "default_fonts", # Embed the default egui fonts.
     "glow",
 ] }
-hashbrown = { version = "0.15.2", features = ["serde"] }
+hashbrown = { version = "0.15.4", features = ["serde"] }
 serde = { version = "1", features = ["derive"] }
 
 # native:
