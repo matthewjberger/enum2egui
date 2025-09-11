@@ -4,9 +4,9 @@ mod structs;
 use enums::derive_enum;
 use proc_macro::TokenStream;
 use proc_macro2::{Ident, Span};
-use quote::{quote, ToTokens};
+use quote::{ToTokens, quote};
 use structs::derive_struct;
-use syn::{parse_macro_input, Attribute, Data, DeriveInput, Error, Lit, Meta, NestedMeta};
+use syn::{Attribute, Data, DeriveInput, Error, Lit, Meta, NestedMeta, parse_macro_input};
 
 macro_rules! derive_error {
     ($string: tt) => {

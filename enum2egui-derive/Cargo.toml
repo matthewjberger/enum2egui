@@ -1,6 +1,6 @@
 [package]
 name = "enum2egui-derive"
-version = "0.32.0"
+version = "0.32.2"
 authors = ["Matthew Berger <matthewjordanberger@gmail.com>"]
 description = """
 enum2egui-derive is a rust derive macro that creates a set of egui ui databindings from arbitrary data structures.
@@ -15,8 +15,8 @@ edition = "2024"
 proc-macro = true
 
 [dependencies]
-egui = "0.32.0"
-hashbrown = "0.15.4"
+egui = "0.32.2"
+hashbrown = "0.15.5"
 proc-macro2 = "1.0"
 quote = "1.0"
 syn = "1.0"

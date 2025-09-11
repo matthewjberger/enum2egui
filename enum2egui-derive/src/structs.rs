@@ -1,8 +1,8 @@
 use crate::{derive_trait, get_custom_label, has_skip_attr};
 use proc_macro::TokenStream;
 use proc_macro2::{Ident, TokenStream as TokenStream2};
-use quote::{quote, quote_spanned, ToTokens};
-use syn::{spanned::Spanned, DataStruct, Fields, FieldsNamed, FieldsUnnamed};
+use quote::{ToTokens, quote, quote_spanned};
+use syn::{DataStruct, Fields, FieldsNamed, FieldsUnnamed, spanned::Spanned};
 
 pub fn derive_struct(name: &Ident, data: &DataStruct) -> TokenStream {
     let DataStruct { fields, .. } = data;

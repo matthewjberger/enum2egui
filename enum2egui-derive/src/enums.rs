@@ -1,7 +1,7 @@
 use crate::{derive_trait, get_custom_label, has_skip_attr};
 use proc_macro::TokenStream;
 use proc_macro2::{Ident, Span};
-use quote::{quote, ToTokens};
+use quote::{ToTokens, quote};
 use syn::{DataEnum, Fields, FieldsNamed, FieldsUnnamed, PathArguments, Type};
 
 pub fn derive_enum(name: &Ident, data: &DataEnum) -> TokenStream {

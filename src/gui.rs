@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
 
-use egui::{widgets::DragValue, Ui};
+use egui::{Ui, widgets::DragValue};
 
 pub use egui;
 
