@@ -155,25 +155,6 @@ pub struct SubData {
     list: Vec<Metadata>,
 }
 
-#[derive(
-    Default,
-    Debug,
-    serde::Serialize,
-    serde::Deserialize,
-    Eq,
-    PartialEq,
-    Hash,
-    Clone,
-    Copy,
-    EnumStr,
-    PartialOrd,
-    Gui,
-)]
-pub enum Simple {
-    #[default]
-    Variant,
-}
-
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)]
 #[derive(Default)]

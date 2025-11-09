@@ -228,11 +228,10 @@ fn unnamed_match_arm(
 }
 
 fn is_vec_type(ty: &Type) -> bool {
-    if let Type::Path(type_path) = ty {
-        if let Some(segment) = type_path.path.segments.last() {
-            return segment.ident == "Vec"
-                && matches!(segment.arguments, PathArguments::AngleBracketed(_));
-        }
+    if let Type::Path(type_path) = ty
+        && let Some(segment) = type_path.path.segments.last() {
+        return segment.ident == "Vec"
+            && matches!(segment.arguments, PathArguments::AngleBracketed(_));
     }
     false
 }

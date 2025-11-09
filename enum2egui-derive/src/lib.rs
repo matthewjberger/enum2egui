@@ -53,10 +53,9 @@ pub(crate) fn has_skip_attr(attrs: &[Attribute]) -> bool {
 }
 
 fn is_enum2egui_skip_attr(attr: &Attribute) -> bool {
-    if let Ok(Meta::List(meta_list)) = attr.parse_meta() {
-        if meta_list.path.is_ident("enum2egui") {
-            return has_skip_path(&meta_list.nested);
-        }
+    if let Ok(Meta::List(meta_list)) = attr.parse_meta()
+        && meta_list.path.is_ident("enum2egui") {
+        return has_skip_path(&meta_list.nested);
     }
     false
 }
@@ -72,16 +71,13 @@ fn has_skip_path(nested: &syn::punctuated::Punctuated<NestedMeta, syn::token::Co
 
 pub(crate) fn get_custom_label(attrs: &Vec<syn::Attribute>) -> Option<String> {
     for attr in attrs {
-        if attr.path.is_ident("enum2egui") {
-            if let Ok(syn::Meta::List(meta_list)) = attr.parse_meta() {
-                for nested_meta in meta_list.nested {
-                    if let NestedMeta::Meta(Meta::NameValue(nv)) = nested_meta {
-                        if nv.path.is_ident("label") {
-                            if let Lit::Str(lit_str) = nv.lit {
-                                return Some(lit_str.value());
-                            }
-                        }
-                    }
+        if attr.path.is_ident("enum2egui")
+            && let Ok(syn::Meta::List(meta_list)) = attr.parse_meta() {
+            for nested_meta in meta_list.nested {
+                if let NestedMeta::Meta(Meta::NameValue(nv)) = nested_meta
+                    && nv.path.is_ident("label")
+                    && let Lit::Str(lit_str) = nv.lit {
+                    return Some(lit_str.value());
                 }
             }
         }
