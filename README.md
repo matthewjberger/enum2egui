@@ -14,7 +14,7 @@ This is useful for generating data bindings that can be modified and displayed i
 Add this to your `Cargo.toml`:
 
 ```toml
-enum2egui = "0.33.0" # supports egui 0.33.0
+enum2egui = "0.34.1" # supports egui 0.34.1
 ```
 
 ### Example
@@ -94,16 +94,14 @@ Then render it with `GuiInspect::ui(..)` or `GuiInspect::ui_mut()`. For example,
 
 ```rust
 impl eframe::App for DemoApp {
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
         let Self { data } = self;
 
-        egui::CentralPanel::default().show(ctx, |ui| {
-            // Read-Only UI
-            data.ui(ui):
+        // Read-Only UI
+        data.ui(ui);
 
-            // Mutable UI
-            data.ui_mut(ui);
-        });
+        // Mutable UI
+        data.ui_mut(ui);
     }
 }
 ```
