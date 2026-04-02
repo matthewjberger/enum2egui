@@ -163,14 +163,12 @@ pub struct DemoApp {
 }
 
 impl eframe::App for DemoApp {
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
         let Self { data } = self;
-        egui::CentralPanel::default().show(ctx, |ui| {
-            egui::ScrollArea::vertical()
-                .id_salt(ui.next_auto_id())
-                .show(ui, |ui| {
-                    data.ui_mut(ui);
-                });
-        });
+        egui::ScrollArea::vertical()
+            .id_salt(ui.next_auto_id())
+            .show(ui, |ui| {
+                data.ui_mut(ui);
+            });
     }
 }

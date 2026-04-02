@@ -45,7 +45,7 @@ pub fn derive_enum(name: &Ident, data: &DataEnum) -> TokenStream {
 
     let gui_mut: proc_macro2::TokenStream = quote! {
         ui.vertical(|ui| {
-            egui::ComboBox::from_id_source(ui.next_auto_id())
+            egui::ComboBox::from_id_salt(ui.next_auto_id())
                 .selected_text(format!("{self}"))
                 .show_ui(ui, |ui| {
                     #selections_mut
@@ -229,7 +229,8 @@ fn unnamed_match_arm(
 
 fn is_vec_type(ty: &Type) -> bool {
     if let Type::Path(type_path) = ty
-        && let Some(segment) = type_path.path.segments.last() {
+        && let Some(segment) = type_path.path.segments.last()
+    {
         return segment.ident == "Vec"
             && matches!(segment.arguments, PathArguments::AngleBracketed(_));
     }
